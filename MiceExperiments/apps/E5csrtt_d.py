@@ -1,14 +1,16 @@
 '''
 Created on 1. 4. 2016
 
-@author: blev
+@author: mjtecka
+
+Processes data from "5 Choice Serial Reaction Time Task (detailed)".
 '''
 
 import csv
-from E5csrtt.mouse import Mouse
-from E5csrtt.mouseSet import MouseSet
-from E5csrtt.experimentSession import ExperimentSession
-from E5csrtt.fiveChoicesSRTT import FiveChoicesSRTT
+from general.mouse import Mouse
+from general.mouseSet import MouseSet
+from E5csrtt_detailed.experimentSession import E5csrttExperimentSession
+from E5csrtt_detailed.fiveChoicesSRTT import FiveChoicesSRTT
 
 correctHeaders = []
 incorrectHeaders = []
@@ -53,63 +55,7 @@ def normalizeScheduleName(name):
     if name == "5CSRTT_1,5_Var1" :
         return "5CSRTT_1500ms_Var1"
 
-def testIt():
-    createCorrectHeaders()
-    createOmissionHeaders()
-    
-    testGroup = MouseSet()
-    
-    with open(inputFile) as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-      
-            #read data from row
-            nameCsv = row['Animal ID']
-            dateCsv = row['Schedule run date']
-            scheduleNameCsv = normalizeScheduleName(row['Schedule name'])
-
-            correctCsv = []            
-            for ch in correctHeaders:
-                correctCsv.append(int(row[ch]))
-            print(correctCsv)
-
-            omissionCsv = []
-            for oh in omissionHeaders:
-                omissionCsv.append(int(row[oh]))
-            
-            #nacist jmeno mysi, pridat do setu mysi            
-            
-            m = testGroup.getMouse(nameCsv)
-            if m == None :
-                m = Mouse(nameCsv)
-                            
-            #vytvorit results sety
-            results = FiveChoicesSRTT()
-            results.setCorrect(correctCsv)
-            results.setOmission(omissionCsv)
-            
-            #vytvorit session
-            s = ExperimentSession(scheduleNameCsv,results,dateCsv)
-                        
-            #pridat session mysi
-            m.addSession(s)
-            testGroup.addMouse(m)
-          
-    for m in testGroup :
-        print("\n-------------------------------\n")
-        print("Mouse identifier: " + m.getIdentifier())
-        print("Session types: " + str(m.getSessionsKeys()))
-    
-        for key in sorted(m.getSessionsKeys()) :
-            sessionSet = m.getSession(key)
-            print ("experiment key: " + key)
-            for sessionX in sessionSet :
-                print("session date: " + str(sessionX.getSessionDate()))
-                print("correct (sum): " + str(sessionX.getResults().getSumCorrect(0,51)) )
-                print("omission (sum): " + str(sessionX.getResults().getSumOmission(0,51)) )
-                print ("counted correct" + str(sessionX.getResults().getCorrect50by10()))
-
-def doIt(inputFile,outputFile):
+def processDataFromCsv():
     createCorrectHeaders()
     createIncorrectHeaders()
     createOmissionHeaders()
@@ -139,30 +85,51 @@ def doIt(inputFile,outputFile):
             for oh in omissionHeaders:
                 omissionCsv.append(int(row[oh]))
             
-            #nacist jmeno mysi, pridat do setu mysi            
-            
+            #get mouse name, add to mouse set           
             m = testGroup.getMouse(nameCsv)
             if m == None :
                 m = Mouse(nameCsv)
                             
-            #vytvorit results sety
+            #create results sets, set data 
             results = FiveChoicesSRTT()
             results.setCorrect(correctCsv)
             results.setIncorrect(incorrectCsv)
             results.setOmission(omissionCsv)
             
             
-            #vytvorit session
-            s = ExperimentSession(scheduleNameCsv,results,dateCsv)
+            #create experiment session
+            s = E5csrttExperimentSession(scheduleNameCsv,results,dateCsv)
                         
-            #pridat session mysi
+            #add session to mouse
             m.addSession(s)
             testGroup.addMouse(m)
     
-    csvKeysCorrect = ['Animal ID', "Schedule Name","Session Date", "Correct 1-10", "Correct 11-20", "Correct 21-30", "Correct 31-40", "Correct 41-50","Incorrect 1-10","Incorrect 11-20", "Incorrect 21-30", "Incorrect 31-40", "Incorrect 41-50", "Omission 1-10", "Omission 11-20", "Omission 21-30", "Omission 31-40", "Omission 41-50"]
- #   csvKeysOmission = ['Animal ID', "Schedule Name","Session Date", "Omission 1-10", "Omission 11-20", "Omission 21-30", "Omission 31-40", "Omission 41-50"]
+    return testGroup
+
+def testIt():
+    testGroup = processDataFromCsv()
+          
+    for m in testGroup :
+        print("\n-------------------------------\n")
+        print("Mouse identifier: " + m.getIdentifier())
+        print("Session types: " + str(m.getSessionsKeys()))
+    
+        for key in sorted(m.getSessionsKeys()) :
+            sessionSet = m.getSession(key)
+            print ("experiment key: " + key)
+            for sessionX in sessionSet :
+                print("session date: " + str(sessionX.getSessionDate()))
+                print("correct (sum): " + str(sessionX.getResults().getSumCorrect(0,51)) )
+                print("incorrect (sum): " + str(sessionX.getResults().getSumIncorrect(0,51)) )
+                print("omission (sum): " + str(sessionX.getResults().getSumOmission(0,51)) )
+                print ("counted correct (by 10): " + str(sessionX.getResults().getCorrect50by10()))
+
+def doIt(inputFile,outputFile):
+    testGroup = processDataFromCsv()
+    
+    csvKeys = ['Animal ID', "Schedule Name","Session Date", "Correct 1-10", "Correct 11-20", "Correct 21-30", "Correct 31-40", "Correct 41-50","Incorrect 1-10","Incorrect 11-20", "Incorrect 21-30", "Incorrect 31-40", "Incorrect 41-50", "Omission 1-10", "Omission 11-20", "Omission 21-30", "Omission 31-40", "Omission 41-50"]
     with open(outputFile, 'w') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=csvKeysCorrect,extrasaction='ignore')        
+        writer = csv.DictWriter(csvfile, fieldnames=csvKeys,extrasaction='ignore')        
         writer.writeheader()          
     
 
@@ -202,14 +169,9 @@ def doIt(inputFile,outputFile):
                 mouseDict['Omission 41-50'] = countOmission[4]
 
                 with open(outputFile, 'a') as csvfile:
-                    writer = csv.DictWriter(csvfile, fieldnames=csvKeysCorrect,extrasaction='ignore')        
+                    writer = csv.DictWriter(csvfile, fieldnames=csvKeys,extrasaction='ignore')        
                     writer.writerow(mouseDict)
             
-        #with open(outputFile, 'a') as csvfile:
-        #    writer = csv.DictWriter(csvfile, fieldnames=csvKeysOmission,extrasaction='ignore')        
-        #    writer.writerow(mouseDict)
-
-
 
 if __name__ == '__main__':
     doIt(inputFile,outputFile)

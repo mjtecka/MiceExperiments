@@ -1,12 +1,12 @@
 '''
 Created on 30. 3. 2016
 
-@author: blev
+@author: mjtecka
 '''
 
 class FiveChoicesSRTT(object):
     '''
-    classdocs
+    "5 Choice Serial Reaction Time Task (detailed)" - test results
     '''
     correct = []
     incorrect = []

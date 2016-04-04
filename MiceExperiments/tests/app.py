@@ -1,12 +1,14 @@
-from E5csrtt.mouse import Mouse
-from E5csrtt.mouseSet import MouseSet
-from E5csrtt.experimentSession import ExperimentSession
-from E5csrtt.fiveChoicesSRTT import FiveChoicesSRTT
+from general.mouse import Mouse
+from general.mouseSet import MouseSet
+from E5csrtt_detailed.experimentSession import E5csrttExperimentSession
+from E5csrtt_detailed.fiveChoicesSRTT import FiveChoicesSRTT
 
 '''
 Created on 30. 3. 2016
 
-@author: blev
+@author: mjtecka
+
+Not real test... yet ;-)
 '''
 
 if __name__ == '__main__':
@@ -20,9 +22,9 @@ if __name__ == '__main__':
     results3 = FiveChoicesSRTT()
     results3.setCorrect([1,1,1,0,1])
     
-    session1 = ExperimentSession("pokus1",results1,"1st july 2016");
-    session2 = ExperimentSession("pokus2",results2,"2nd july 2016");
-    session3 = ExperimentSession("pokus1",results3,"3rd july 2016");
+    session1 = E5csrttExperimentSession("pokus1",results1,"1st july 2016");
+    session2 = E5csrttExperimentSession("pokus2",results2,"2nd july 2016");
+    session3 = E5csrttExperimentSession("pokus1",results3,"3rd july 2016");
 
     
     mys1 = Mouse("alois")

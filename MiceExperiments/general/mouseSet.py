@@ -6,7 +6,7 @@ Created on 30. 3. 2016
 
 class MouseSet:
     '''
-    classdocs
+    Set of mice in given results file.
     '''
     #set of mice - set of Mouse
     mouseSet = set()

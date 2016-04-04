@@ -1,20 +1,21 @@
 '''
 Created on 30. 3. 2016
 
-@author: blev
+@author: mjtecka
 '''
-from E5csrtt.experimentSession import ExperimentSession 
+
+#from general.experimentSessionAbstract import ExperimentSession
 
 class Mouse:
     '''
-    classdocs
+    Mouse representation.
+    Each mouse has identifier (Animal ID/name)
+    Mouse can take part in multiple experiment sessions.
     '''
-    #id
-    #list of experiments
 
     def __init__(self, identifier):
         '''
-        Constructor
+        identifier = Animal ID / name
         '''
         self.identifier = identifier
         self.sessions = dict()

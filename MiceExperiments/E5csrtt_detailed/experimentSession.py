@@ -1,18 +1,19 @@
 '''
 Created on 30. 3. 2016
 
-@author: blev
+@author: mjtecka
 '''
-from E5csrtt.fiveChoicesSRTT import FiveChoicesSRTT
 
-class ExperimentSession:
+from general.experimentSessionAbstract import ExperimentSession
+from E5csrtt_detailed.fiveChoicesSRTT import FiveChoicesSRTT
+
+
+class E5csrttExperimentSession(ExperimentSession):
     '''
-    classdocs
+    Experiment session for "5 Choice Serial Reaction Time Task (detailed)"
+    includes sessionType (some parameters can be different for given task), sessionDate and results
     '''
 
-    #date - date
-    #varianta [string - enum]
-    #results - five choices
     results = FiveChoicesSRTT()
 
     def __init__(self, sessionType, results, sessionDate):
