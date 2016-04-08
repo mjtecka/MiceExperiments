@@ -17,9 +17,6 @@ class E5csrttExperimentSession(ExperimentSession):
     results = FiveChoicesSRTT()
 
     def __init__(self, sessionType, results, sessionDate):
-        '''
-        Constructor
-        '''
         self.sessionType=sessionType
         self.results=results
         self.sessionDate = sessionDate

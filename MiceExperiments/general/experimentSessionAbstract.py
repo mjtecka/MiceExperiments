@@ -8,17 +8,18 @@ import abc
 class ExperimentSession:
     __metaclass__ = abc.ABCMeta
 
+
     def __init__(self, sessionType, results, sessionDate):
+        self.sessionType = sessionType
+        self.results = results
+        self.sessionDate = sessionDate
         return
 
-    @abc.abstractclassmethod
     def getSessionDate(self):
-        return       
-    
-    @abc.abstractclassmethod    
+        return self.sessionDate
+          
     def getType(self):
-        return 
+        return self.sessionType
 
-    @abc.abstractclassmethod
     def getResults(self):
-        return 
+        return self.results
